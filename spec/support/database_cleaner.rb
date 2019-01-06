@@ -14,12 +14,10 @@ RSpec.configure do |config|
   end
 
   config.before(:each) do
-    console.log "Preserving database State"
     DatabaseCleaner.start
   end
 
   config.after(:each) do
     DatabaseCleaner.clean
-    console.log "Database returned to preserved state"
   end
 end
