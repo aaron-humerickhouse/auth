@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Doorkeeper::TokensController, type: :request do
+  let!(:user) { FactoryBot.create(:user) }
+
   describe 'create' do
-    let!(:user) { FactoryBot.create(:user) }
     let(:body) { JSON.parse(subject.body) }
 
     subject {
@@ -31,6 +32,13 @@ RSpec.describe Doorkeeper::TokensController, type: :request do
       it 'returns success' do
         expect(subject).to be_successful
       end
+
+      it 'creates a record' do
+        expect{ subject }.to change { Doorkeeper::AccessToken.count }.by(1)
+        access_token = Doorkeeper::AccessToken.last
+        expect(access_token.token).to eq body['access_token']
+        expect(access_token.resource_owner_id).to eq user.id
+      end
     end
 
     context 'with invalid credentials' do
@@ -45,5 +53,23 @@ RSpec.describe Doorkeeper::TokensController, type: :request do
         expect(subject).to be_unauthorized
       end
     end
+  end
+
+  describe 'revoke' do
+    #Doorkeeper::AccessToken.first
+    it 'revokes authorization' do
+      post 'http://localhost:3001/api/v1/oauth2/token', 
+      params: {
+          email: user.email,
+          password: user.password,
+          grant_type: 'password'
+      }
+
+
+    end
+  end
+
+  describe 'introspect' do
+    it 'does something'
   end
 end

@@ -1,6 +1,6 @@
 Doorkeeper.configure do
   api_only
-  
+
   # Change the ORM that doorkeeper will use (needs plugins)
   orm :active_record
 
@@ -14,7 +14,7 @@ Doorkeeper.configure do
 
   resource_owner_from_credentials do |routes|
     user = User.find_for_database_authentication(:email => params[:email])
-    if user && user.valid_for_authentication? { user.valid_password?(params[:password]) }
+    if user&.valid_for_authentication? { user.valid_password?(params[:password]) }
       user
     end
   end
@@ -32,12 +32,10 @@ Doorkeeper.configure do
   # Under some circumstances you might want to have applications auto-approved,
   # so that the user skips the authorization step.
   # For example if dealing with a trusted application.
-  # skip_authorization do |resource_owner, client|
-  #   client.superapp? or resource_owner.admin?
-  # end
-  skip_authorization do
-    true
+  skip_authorization do |resource_owner, client|
+    client.superapp? or resource_owner.admin?
   end
+
 
 
 
