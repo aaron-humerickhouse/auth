@@ -13,11 +13,10 @@
 ActiveRecord::Schema.define(version: 2019_01_06_164853) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "oauth_access_grants", force: :cascade do |t|
-    t.uuid "resource_owner_id", null: false
+    t.bigint "resource_owner_id", null: false
     t.bigint "application_id", null: false
     t.string "token", null: false
     t.integer "expires_in", null: false
@@ -33,7 +32,7 @@ ActiveRecord::Schema.define(version: 2019_01_06_164853) do
   end
 
   create_table "oauth_access_tokens", force: :cascade do |t|
-    t.uuid "resource_owner_id"
+    t.bigint "resource_owner_id"
     t.bigint "application_id"
     t.string "token", null: false
     t.string "refresh_token"
@@ -68,7 +67,7 @@ ActiveRecord::Schema.define(version: 2019_01_06_164853) do
     t.index ["password_archivable_type", "password_archivable_id"], name: "index_password_archivable"
   end
 
-  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "first_name", default: "", null: false
@@ -92,6 +91,7 @@ ActiveRecord::Schema.define(version: 2019_01_06_164853) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["created_at"], name: "index_users_on_created_at"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true

@@ -58,14 +58,24 @@ RSpec.describe Doorkeeper::TokensController, type: :request do
   describe 'revoke' do
     #Doorkeeper::AccessToken.first
     it 'revokes authorization' do
-      post 'http://localhost:3001/api/v1/oauth2/token', 
-      params: {
-          email: user.email,
-          password: user.password,
-          grant_type: 'password'
-      }
+      Timecop.freeze do
+        post 'http://localhost:3001/api/v1/oauth2/token', 
+        params: {
+            email: user.email,
+            password: user.password,
+            grant_type: 'password'
+        }
 
+        token = Doorkeeper::AccessToken.last
 
+        post 'http://localhost:3001/api/v1/oauth2/revoke', 
+        params: {
+            token: token.token
+        }
+
+        token.reload()
+        expect(token.revoked_at).to be_within(0.005).of Time.zone().now
+      end
     end
   end
 

@@ -28,9 +28,7 @@ Things you may want to cover:
 ### System Requirements
 Follow instructions for [installing postgresql](https://www.if-not-true-then-false.com/2012/install-postgresql-on-fedora-centos-red-hat-rhel/)
 
-```
-sudo dnf install postgresql-contrib
-```
+
 
 ### Application Reqirements
 ```
