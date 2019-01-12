@@ -7,7 +7,7 @@ RSpec.describe Doorkeeper::TokensController, type: :request do
     let(:body) { JSON.parse(subject.body) }
 
     subject {
-      post 'http://localhost:3001/api/v1/oauth2/token', 
+      post "#{API_V1_PATH}/auth/token", 
       params: {
           email: params_email,
           password: params_password,
@@ -59,7 +59,7 @@ RSpec.describe Doorkeeper::TokensController, type: :request do
     #Doorkeeper::AccessToken.first
     it 'revokes authorization' do
       Timecop.freeze do
-        post 'http://localhost:3001/api/v1/oauth2/token', 
+        post "#{API_V1_PATH}/auth/token", 
         params: {
             email: user.email,
             password: user.password,
@@ -68,13 +68,13 @@ RSpec.describe Doorkeeper::TokensController, type: :request do
 
         token = Doorkeeper::AccessToken.last
 
-        post 'http://localhost:3001/api/v1/oauth2/revoke', 
+        post "#{API_V1_PATH}/auth/revoke", 
         params: {
             token: token.token
         }
 
         token.reload()
-        expect(token.revoked_at).to be_within(0.005).of Time.zone().now
+        expect(token.revoked_at).to be_within(TIME_TOLERANCE).of Time.zone().now
       end
     end
   end

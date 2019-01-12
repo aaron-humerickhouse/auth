@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  let(:valid_user) { FactoryBot.build(:user) }
+
   describe 'validations' do
     context 'email' do
       it 'is required' do
@@ -72,8 +74,13 @@ RSpec.describe User, type: :model do
                                 password_confirmation: 'Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Test12Te')
         expect(user).to be_valid
       end
-      it 'is expirable'
-      it 'is archivable'
+
+      it 'is expirable and unexpirable' do
+        valid_user.need_change_password
+        expect(valid_user).to be_need_change_password
+        valid_user.assign_attributes(password: 'Test12345', password_confirmation: 'Test12345', password_changed_at: 1.second.ago)
+        expect(valid_user).not_to be_need_change_password
+      end
     end
 
     context 'first_name' do
@@ -131,10 +138,13 @@ RSpec.describe User, type: :model do
     end
   end
 
-  it 'is lockable'
   it 'is recoverable'
   it 'is rememerable'
   it 'is confirmable'
   it 'is trackable'
   it 'is database_authenticatable'
+  
+  it 'is archivable'
+  it 'is unarchivable'
+
 end
